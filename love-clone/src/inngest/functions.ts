@@ -17,9 +17,13 @@ export const codeAgentFunction = inngest.createFunction(
   async ({ event, step }) => {
 
     const sandboxId = await step.run("get-sandbox-id", async () => { 
+        // Create sandbox with 10-minute initial timeout as a safety net
+        // This gives enough time for agent execution (which can take 1-3 minutes)
+        // The timeout will be reset to 5 minutes right before returning the URL
         const sandbox = await Sandbox.create('love-clone-test-4-dev', {
-            timeoutMs: 60 * 60 * 1000, // 1 hour (max is 24 hours)
+            timeoutMs: 10 * 60 * 1000, // 10 minutes initial (safety net for execution)
         });
+
         return sandbox.sandboxId;
     }) 
     const codeAgent = createAgent<AgentState>({
@@ -154,7 +158,15 @@ export const codeAgentFunction = inngest.createFunction(
         Object.keys(result.state.data.files || {}).length === 0;
 
     const sandboxUrl = await step.run("get-sandbox-url", async () => {
+        // Reconnect to the sandbox to get the URL
         const sandbox = await getSandbox(sandboxId);
+        
+        // CRITICAL: Explicitly extend the timeout right before returning the URL
+        // This ensures the sandbox stays alive for a full 5 minutes from NOW,
+        // even after the Inngest function completes and the creating connection closes.
+        // Without this, the sandbox might close prematurely when the function ends.
+        await sandbox.setTimeout(5 * 60 * 1000); // Reset to 5 minutes from now
+        
         const host = sandbox.getHost(3000);
         return `https://${host}`;
     });
