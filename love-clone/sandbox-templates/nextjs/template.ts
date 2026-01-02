@@ -8,9 +8,7 @@ export const template = Template()
   .copy('compile_page.sh', '/usr/local/bin/compile_page.sh')
   .runCmd('chmod +x /usr/local/bin/compile_page.sh')
   .setWorkdir('/home/user/nextjs-app')
-  .runCmd('npx --yes create-next-app@latest . --yes')
-  // Skip shadcn for now - install it dynamically in sandbox when needed
-  // This makes the template build much faster
+  .runCmd('npx --yes create-next-app@latest . --ts --tailwind --eslint --no-src-dir --app --yes')
   .runCmd('mv /home/user/nextjs-app/* /home/user/ && rm -rf /home/user/nextjs-app')
   .setUser('user')
   .setWorkdir('/home/user')

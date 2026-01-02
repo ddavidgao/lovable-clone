@@ -6,12 +6,12 @@ This directory contains the E2B sandbox template configuration for running Next.
 
 1. **Set your E2B API key** (if not already set via CLI):
    ```bash
-   export E2B_API_KEY=e2b_d3df5a423ec8594edf3daefe915a1a3928f4993a
+   export E2B_API_KEY=your_e2b_api_key_here
    ```
    
    Or create a `.env` file in the project root:
    ```
-   E2B_API_KEY=e2b_d3df5a423ec8594edf3daefe915a1a3928f4993a
+   E2B_API_KEY=your_e2b_api_key_here
    ```
 
 2. **Build the template**:
